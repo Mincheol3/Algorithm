@@ -1,105 +1,106 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.PriorityQueue;
-import java.util.Stack;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
+public class BJ_공주님의정원_2457{
 
-public class BJ_공주님의정원_2457 {
-
-    static int N, ans;
-    static HashMap<String, Integer> map = new HashMap<String, Integer>();
-    static Stack<Integer> s = new Stack<>();
-    static PriorityQueue<flower> pick = new PriorityQueue<flower>((f1,f2)-> f1.em == f2.em ? f2.ed - f1.ed : f2.em - f1.em);
-    static PriorityQueue<flower> pq = new PriorityQueue<flower>(new Comparator<flower>() {
-
-        @Override
-        public int compare(flower o1, flower o2) {
-
-            if (o1.sm == o2.sm && o1.sd == o2.sd) {
-
-                if (o1.em == o2.em)
-                    return o2.ed - o1.ed;
-                else {
-                    return o2.em - o1.em;
-                }
-            } else if (o1.sm == o2.sm && o1.em == o2.em) {
-
-               
-                    return o1.sd - o2.sd;
-               
-            } else if (o1.sm == o2.sm) {
-                return o2.em - o1.em;
-            }
-            return o1.sm - o2.sm;
-        }
-
-    });
-
-    public static void main(String[] args) throws Exception {
-
+    static int N;
+    static PriorityQueue<Flower> pq = new PriorityQueue<Flower>((f1,f2) -> f1.s== f2.s ? f1.e - f2.e : f1.s - f2.s);
+    static PriorityQueue<Flower> select = new PriorityQueue<Flower>((f1,f2) -> f2.e - f1.e);
+    public static void main(String[] args) throws Exception{
+        
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        map.put("abc", 1);
-        System.out.println(map.get("abc"));
-        map.
+        
         N = Integer.parseInt(br.readLine());
 
-        for (int i = 0; i < N; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            pq.offer(new flower(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
-                    Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+        StringTokenizer st ;
+        
+        for(int i =0; i < N; i++){
+            st = new StringTokenizer(br.readLine());
+            int sm = Integer.parseInt(st.nextToken())*100;
+            int sd = Integer.parseInt(st.nextToken());
+
+            int em = Integer.parseInt(st.nextToken())*100;
+            int ed = Integer.parseInt(st.nextToken());
+
+            pq.add(new Flower(sm+sd, em+ed));
+
+
         }
-
-        flower f = pq.poll();
-        int sm = f.sm;
-        int sd = f.sd;
-        int em = f.em;
-        int ed = f.ed;
-        int preem = em;
-        int preed = ed;
-        int cured = ed;
-        int curem = em;
-        pick.offer(new flower(sm,sd,em,ed));
-        while(!pq.isEmpty()){
-
-            f = pq.poll();
-            if(!pick.isEmpty()){
-                // if(pick.peek().sm == f.sm) continue;
-                if(pick.peek().em > f.em || (pick.peek().em == f.em && pick.peek().ed >= f.ed)) continue;
-                if(f.sm < preem || (preem == f.sm && preed >= f.sd)){
-                    // pick.poll();
-                    if(pick.size() != 1 && pick.peek().sm < f.sm){
-                        pick.poll();
-                    }
-                    System.out.println(f.sm + " " + f.sd + " " + f.em + " " + f.ed);
-                    pick.offer(new flower(f.sm, f.sd, f.em, f.ed));
-                    continue;
-                }
-                preem = pick.peek().sm;
-                preed = pick.peek().sd;
-                System.out.println(preem + " " + preed);
-            
+        int ans = 1;
+        // 3 월 1일전에 지는 꽃 필요없음.
+        while(!pq.isEmpty() && pq.peek().e <= 301){
+            pq.poll();
+        }
+        int s = 0;
+        int e= 0;
+        // 3월 1일 이전에 피
+        while(!pq.isEmpty() && pq.peek().s <= 301){
+            if(e <= pq.peek().e){
+                e = pq.peek().e;
+                s = pq.poll().s;
+            }
+            else pq.poll();
+            // s = pq.peek().s;
+            // e = pq.poll().e;
+            if(e > 1130) {
+                System.out.println(ans);
+                return;
             }
         }
-        System.out.println(pick.size());
+        select.add(new Flower(s, e));
+
+        int pres = select.peek().s;
+        int pree = select.peek().e;
+
+        
+        if(pree == 0){
+            System.out.println(0);
+            return;
+        }
+        // System.out.println(pres + " " + pree);
+        int currs = 0;
+        int curre = 0;
+        while(!pq.isEmpty()){
+            
+            
+            // 범위안에 들면
+            while(!pq.isEmpty() && pree >= pq.peek().s){
+                // if(pq.peek().s == pq.peek().e){
+                //     pq.poll(); continue;
+                // }
+                if(select.peek().e <= pq.peek().e){
+                    select.add(new Flower(pq.peek().s, pq.poll().e));
+                }
+                else pq.poll();
+            }
+            
+            ans++;
+            pree = select.peek().e;
+            // System.out.println(select.peek().s + " " + pree);
+            if(pree > 1130) {
+                System.out.println(ans);
+                return;
+            }
+            if(!pq.isEmpty() && pree < pq.peek().s) {
+                System.out.println(0);
+                return;
+            }
+            
+        }
+
+        System.out.println(0);
+
+
     }
 
-    static class flower {
+    static class Flower{
 
-        int sm;
-        int sd;
-        int em;
-        int ed;
+        int s;
+        int e;
 
-        flower(int sm, int sd, int em, int ed) {
-
-            this.sm = sm;
-            this.sd = sd;
-            this.em = em;
-            this.ed = ed;
+        Flower(int s, int e){
+            this.s = s;
+            this.e = e;
         }
     }
 }
