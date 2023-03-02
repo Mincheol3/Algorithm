@@ -15,6 +15,7 @@ public class BJ_통학버스_2513 {
         K = Integer.parseInt(st.nextToken());
         S = Integer.parseInt(st.nextToken());
 
+        //학교기준 오른쪽과 왼쪽을 나눠서 저장
         for(int i = 0; i < N; i++){
             st = new StringTokenizer(br.readLine());
             int x = Integer.parseInt(st.nextToken());
@@ -26,6 +27,7 @@ public class BJ_통학버스_2513 {
                 right.add(new apart(x, n));
             }
         }
+        // 학교와 거리가 먼 순서로 정렬
         Collections.sort(left, (e1, e2) -> {
             return e1.x - e2.x;
         });
@@ -33,7 +35,9 @@ public class BJ_통학버스_2513 {
         Collections.sort(right, (e1,e2) -> {
             return e2.x-e1.x;
         });
+        // 현재까지의 합계
         int sum = 0;
+        // 제일 먼 곳의 x 좌표
         int num = 0;
         while(left.size() > 0){
             num =left.get(0).x;
@@ -49,12 +53,12 @@ public class BJ_통학버스_2513 {
                 }
                 if(sum >= K) break;
             }
-            // System.out.println(num);
+          
             ans += (S -num)*2;
             sum =0;
         
         }
-        System.out.println(right.size());
+       
         while(right.size() > 0){
             num =right.get(0).x;
             for(int i = 0; i < right.size(); i++){
@@ -69,7 +73,7 @@ public class BJ_통학버스_2513 {
                 }
                 if(sum >= K) break;
             }
-            // System.out.println(num);
+            
             ans += (num - S)*2;
             sum = 0;
         }
