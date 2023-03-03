@@ -59,7 +59,7 @@ public class BJ_중량제한_1939 {
         int fx = find(x);
         int fy = find(y);
 
-        if(fx <= fy) parent[y] = parent[x];
-        else parent[x] = parent[y];
+        if(fx <= fy) parent[fy] = fx;
+        else parent[fx] = fy;
     }
 }
