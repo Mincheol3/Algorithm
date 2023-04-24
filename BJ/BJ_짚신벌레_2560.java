@@ -22,6 +22,10 @@ public class BJ_짚신벌레_2560 {
             if(i - a >= 0) day[i] = (day[i] + day[i-a])%1000;
             if(i - b >= 0) day[i] = (day[i] - day[i-b]+ 1000)%1000;
         }
+        if(d > N) {
+            System.out.println(day[N] % 1000);
+            return;
+        }
         System.out.println((day[N]-day[N-d]+1000)%1000);
     }
 }
